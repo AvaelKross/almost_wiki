@@ -1,0 +1,36 @@
+<% if notice %>
+  <p id="notice"><%= notice %></p>
+<% end %>
+
+<%= form_for @page, :html => {:class => "form-horizontal"} do |f| %>
+
+  <% unless params[:action] == "edit" %>
+  <div class="control-group">
+    <%= f.label :name, :class => "control-label" %>
+    <div class="controls">
+    
+      <%= f.text_field :name %>
+    </div>
+  </div>
+  <% end %>
+  <div class="control-group">
+    <%= f.label :title, :class => "control-label" %>
+    <div class="controls">
+    <%= f.text_field :title %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :content, :class => "control-label" %>
+    <div class="controls">
+      <%= f.text_area :content, :size => "60x8" %>
+    </div>
+  </div>
+  <% unless @name.nil? %>
+    <div class="control-group">
+      <%= f.hidden_field :parent_name, :value => @name %> 
+    </div>
+  <% end %>
+  <div class="controls actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,13 @@
+<h1>Welcome!</h1>
+
+<% unless @tree.nil? %>
+		<ul>
+			<% Page.each_with_level(@tree) do |node, level| %>
+				<li>
+					<%= "-" * level%>
+					<%= link_to node.title, page_path(node.link) %>
+				</li>
+			<% end %>
+		</ul>
+	<% end %>
+<%= link_to 'Create root page', new_root_page_path %>

@@ -1,0 +1,32 @@
+<div class="span6">
+	<% if notice %>
+      <div class="alert alert-info">
+        <p id="notice"><%= notice %></p>      
+      </div>
+    <% end %>
+	<% unless @page.nil? %>
+		<h4>
+			<b>Name:</b>
+			<%= @page.name %>
+		</h4>
+		<h4>
+			<b>Title:</b>
+			<%= @page.title %>
+		</h4>
+		<h4>
+			<b>Content:</b>
+		</h4>
+		<div>
+			<%= raw simple_format(@page.content) %>
+		</div>
+		<br>
+  		<%= link_to 'Create subpage', new_page_path(@page.link) %> |
+		<%= link_to 'Edit', edit_page_path(@page.link) %> |
+
+		<% if @page.ancestors.any? %>
+			<%= link_to 'Level Up', page_path(@page.backlink) %>
+		<% else %>
+			<%= link_to 'Level Up', pages_path %>
+		<% end %>
+	<% end %>
+</div>
