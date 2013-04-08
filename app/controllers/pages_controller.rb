@@ -1,3 +1,19 @@
+class String
+#converts string from wiki codes to html codes
+  def to_html_code
+	self.gsub!(/\*\*(.*)?(\*\*)/, '<b>\1</b>')
+  	self.gsub!(/\\\\(.*)?(\\\\)/, '<i>\1</i>')
+  	self.gsub!(/\(\(([A-Za-z0-9\u0410-\u044F\/]*)\s(.*)?(\)\))/, '<a href="/\1">\2</a>')
+  end
+  
+  #converts string from html codes to wiki codes
+  def to_wiki_code
+  	self.gsub!(/<b>(.*)?(<\/b>)/,'**\1**')
+  	self.gsub!(/<i>(.*)?(<\/i>)/,'\\\\\\\\\1\\\\\\\\')
+  	self.gsub!(/<a href="\/(.*)?">(.*)?(<\/a>)/,'((\1 \2))')
+  end
+end
+
 class PagesController < ApplicationController
   before_filter :process_path, :only => [:show, :new, :edit, :update]
   before_filter :find_page, :only => [:show, :edit]
@@ -27,7 +43,7 @@ class PagesController < ApplicationController
   # GET (*name){0,1}/edit
   def edit
   	expire_page :action => :show
-  	@page.content = to_wiki_code(@page.content)
+  	@page.content = @page.content.to_wiki_code
   end
 
   # POST /pages
@@ -35,7 +51,7 @@ class PagesController < ApplicationController
     @page = Page.new({
     	:name => params[:page][:name],
     	:title => params[:page][:title],
-    	:content => to_html_code(params[:page][:content])
+    	:content => params[:page][:content].to_html_code
     	})
     #convert codes to html on create
     respond_to do |format|
@@ -57,7 +73,7 @@ class PagesController < ApplicationController
     respond_to do |format|
       if @page.update_attributes({
     	:title => params[:page][:title],
-    	:content => to_html_code(params[:page][:content])
+    	:content => params[:page][:content].to_html_code
     	})
         format.html { redirect_to page_path(@page.link)}
       else
@@ -66,22 +82,6 @@ class PagesController < ApplicationController
     end
   end
 	
-	#converts string from wiki codes to html codes
-	def to_html_code(str)
-		str.gsub!(/\*\*(.*)?(\*\*)/, '<b>\1</b>')
-  	str.gsub!(/\\\\(.*)?(\\\\)/, '<i>\1</i>')
-  	str.gsub!(/\(\(([A-Za-z0-9\u0410-\u044F\/]*)\s(.*)?(\)\))/, '<a href="/\1">\2</a>')
-  	return str
-  end
-  
-  #converts string from html codes to wiki codes
-  def to_wiki_code(str)
-  	str.gsub!(/<b>(.*)?(<\/b>)/,'**\1**')
-  	str.gsub!(/<i>(.*)?(<\/i>)/,'\\\\\\\\\1\\\\\\\\')
-  	str.gsub!(/<a href="\/(.*)?">(.*)?(<\/a>)/,'((\1 \2))')
-  	return str
-  end
-
 	#getting name and path
   def process_path
     unless params[:name].nil?
